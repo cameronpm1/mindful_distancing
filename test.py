@@ -6,16 +6,16 @@ from scripts.hmm import hmm
 from scripts.movenet import movenet
 
 
-
+#initialize hmm, movenet, and probability map classes
 hmm1 = hmm()
 movenet1 = movenet()
+map1 = polarMap()
 
+#load a test image and get hmm prediction
 pose = movenet1.predict('misc/frame_00463.jpeg')
 prediction = hmm1.predict(pose)
-map1 = polarMap(theta_bins=10)
 
-map1.map_behavior('crouch',distance=0,angle=0)
+#load predicted behavior into the map assuming distance of 2ft and directly ahead
+map1.map_behavior(prediction,distance=2,angle=0)
+#propagate map by 1 timestep (previous probabilities slowly go to 0)
 map1.map_decay()
-print(map1.map)
-map1.map_decay()
-print(map1.map)

@@ -89,9 +89,6 @@ class polarMap():
         depth_point = np.abs(self.depth_points - distance).argmin()
         obs_pos = np.array([np.cos(angle),np.sin(angle)]) * distance
 
-        #update map to current timestep
-        self.map_decay()
-
         #update map with identified behavioral distribution
         bd = behavior_distributions[behavior]
         for i,theta in enumerate(self.theta_points):
