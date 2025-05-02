@@ -1,21 +1,12 @@
 import cv2
 import numpy as np
 
-from scripts.polar_map import polarMap
-from scripts.hmm import hmm
-from scripts.movenet import movenet
+from scripts.planner import planner
 
 
-#initialize hmm, movenet, and probability map classes
-hmm1 = hmm()
-movenet1 = movenet()
-map1 = polarMap()
+turtlebot_planner = planner(goal_angle=2.0,init_angle=0.0)
 
-#load a test image and get hmm prediction
-pose = movenet1.predict('misc/frame_00463.jpeg')
-prediction = hmm1.predict(pose)
-
-#load predicted behavior into the map assuming distance of 2ft and directly ahead
-map1.map_behavior(prediction,distance=2,angle=0)
-#propagate map by 1 timestep (previous probabilities slowly go to 0)
-map1.map_decay()
+#after filling in necessary code, this should handle turtlebot run loop
+for i in range(10):
+    turtlebot_angle_change = turtlebot_planner.step()
+    print(turtlebot_angle_change)

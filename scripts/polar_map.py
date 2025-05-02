@@ -39,17 +39,22 @@ class polarMap():
             depth range of the map
         '''
         
+        self.depth_bins = depth_bins
+        self.theta_bins = theta_bins
+
         self.depth_range = depth_range
 
         self.map = np.zeros((theta_bins,depth_bins))
         self.theta_points = np.linspace(0,np.pi*2*(theta_bins-1)/theta_bins,theta_bins) + np.pi*2/(theta_bins*2)
         self.depth_points = np.linspace(0,depth_range*(depth_bins-1)/depth_bins,depth_bins) + depth_range/(depth_bins*2)
 
+        #decay constants
+        self.decay_factor = 0.5
+        self.decay_tol = 0.005
+
 
     def map_decay(
             self,
-            decay_factor : float = 0.5,
-            decay_tol : float = 0.005,
     ) -> None:
         '''
         decay map weighting each timestep, set a values belowe decay_tol to 0
@@ -62,8 +67,8 @@ class polarMap():
             tolerance for setting weights to 0
         '''
 
-        self.map = self.map*decay_factor
-        self.map[self.map < decay_tol] = 0
+        self.map = self.map*self.decay_factor
+        self.map[self.map < self.decay_tol] = 0
 
     def map_behavior(
             self,
@@ -96,6 +101,8 @@ class polarMap():
                 for k,dist in enumerate(bd['means']):
                     point = np.array([np.cos(theta),np.sin(theta)]) * depth
                     self.map[i,j] += multivariate_normal.pdf(point - obs_pos,dist,bd['stds'][k])
+
+        self.map[self.map < self.decay_tol] = 0
 
     def get_map(self):
         return self.map
